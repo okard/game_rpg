@@ -2,9 +2,8 @@
 extern mod glfw;
 extern mod gl;
 
-
-mod engine;
-mod shader;
+use super::engine;
+use super::tilemap;
 
 pub struct App
 {
@@ -18,9 +17,12 @@ impl App
 	pub fn run()
 	{
 		// Choose a GL profile that is compatible with OS X 10.7+
-        glfw::window_hint::context_version(3, 2);
-        glfw::window_hint::opengl_profile(glfw::OpenGlCoreProfile);
-        glfw::window_hint::opengl_forward_compat(true);
+		glfw::window_hint::context_version(3, 2);
+		glfw::window_hint::opengl_profile(glfw::OpenGlCoreProfile);
+		glfw::window_hint::opengl_forward_compat(true);
+
+		//TODO remove when handled
+		glfw::window_hint::resizable(false);
 
 		// Set up an error callback
 		glfw::set_error_callback(~ErrorContext);
@@ -38,11 +40,15 @@ impl App
 			// Load the OpenGL function pointers
 			gl::load_with(glfw::get_proc_address);
 
-			let mut sp = shader::ShaderProgram::new();
+			//Viewport config
+			let (width, height) = window.get_size();
+			gl::Viewport(0, 0, width, height);
 
-			sp.add_shader_file("./data/client/shader/default.vs", gl::VERTEX_SHADER);
-			sp.add_shader_file("./data/client/shader/default.fs", gl::FRAGMENT_SHADER);
-			sp.link_program();
+			//create render context
+			let mut rc = engine::RenderContext::new();
+			let mut tchunk = tilemap::TilemapChunk::new();
+			tchunk.setup();
+			rc.draw(&tchunk);
 
 			//Run event loop
 			App::run_event_loop(&window);
@@ -54,20 +60,26 @@ impl App
 		// Loop until the user closes the window
 		while !window.should_close()
 		{
-			// Swap front and back buffers
-			window.swap_buffers();
-
-			// Poll for and process events
+			// Poll events
 			glfw::poll_events();
+
+			// Clear the screen to black
+			gl::ClearColor(0.3, 0.3, 0.3, 1.0);
+			gl::Clear(gl::COLOR_BUFFER_BIT);
+
+			//draw all stuff
+
+			// Swap buffers
+			window.swap_buffers();
 		}
 	}
 }
 
 struct ErrorContext;
 impl glfw::ErrorCallback for ErrorContext {
-    fn call(&self, _: glfw::Error, description: ~str) {
-        println!("GLFW Error: {:s}", description);
-    }
+	fn call(&self, _: glfw::Error, description: ~str) {
+		println!("GLFW Error: {:s}", description);
+	}
 }
 
 

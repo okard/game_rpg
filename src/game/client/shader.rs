@@ -1,13 +1,15 @@
 
 extern mod gl;
+use gl::types::*;
 
 use std::ptr;
 use std::str;
 use std::vec;
 use std::path::Path;
 use std::io::fs::File;
+use std::hashmap::HashMap;
 
-use gl::types::*;
+
 
 /*
 * A shader program
@@ -18,6 +20,7 @@ pub struct ShaderProgram
 	program_id: GLuint,
 	linked: bool,
 	shader: ~[GLuint],
+	uniforms: HashMap<u64, GLuint>
 }
 
 impl ShaderProgram
@@ -27,7 +30,8 @@ impl ShaderProgram
 		ShaderProgram {
 			program_id: gl::CreateProgram(),
 			linked: false,
-			shader: ~[]
+			shader: ~[],
+			uniforms: HashMap::new()
 		}
 	}
 
@@ -110,6 +114,29 @@ impl ShaderProgram
 	pub fn use_program(&self)
 	{
 		gl::UseProgram(self.program_id);
+	}
+
+	//read in all attributes/uniforms/varying
+
+	#[inline]
+	pub fn set_fragment_name(&self, name: &str)
+	{
+		unsafe
+		{
+			name.with_c_str(|ptr| gl::BindFragDataLocation(self.program_id, 0, ptr));
+		}
+	}
+
+	#[inline]
+	pub fn get_uniform(&self, name: &str) -> GLint
+	{
+		//TODO check uniforms map
+		let mut id = 0;
+		unsafe
+		{
+			id = gl::GetUniformLocation(self.program_id, name.as_ptr() as *i8);
+		}
+		id
 	}
 }
 

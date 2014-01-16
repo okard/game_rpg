@@ -5,9 +5,14 @@
 extern mod native;
 extern mod glfw;
 extern mod gl;
+extern mod nalgebra;
 
-mod client {
+use client::app;
+pub mod client {
 	pub mod app;
+	pub mod engine;
+	pub mod shader;
+	pub mod tilemap;
 }
 
 
@@ -18,5 +23,5 @@ fn start(argc: int, argv: **u8) -> int {
 }
 
 fn main() {
-	client::app::App::run();
+	app::App::run();
 }
