@@ -5,7 +5,7 @@ pushd deps/glfw-rs
 mkdir build
 cd build
 cmake ..
-make
+cmake --build .
 popd
 
 pushd deps/gl-rs

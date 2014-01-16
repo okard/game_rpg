@@ -6,7 +6,10 @@ extern mod native;
 extern mod glfw;
 extern mod gl;
 
-mod game::client::app;
+mod client {
+	pub mod app;
+}
+
 
 #[start]
 fn start(argc: int, argv: **u8) -> int {
@@ -15,5 +18,5 @@ fn start(argc: int, argv: **u8) -> int {
 }
 
 fn main() {
-	app::App::run();
+	client::app::App::run();
 }

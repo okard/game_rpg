@@ -40,8 +40,8 @@ impl App
 
 			let mut sp = shader::ShaderProgram::new();
 
-			sp.add_shader_file("./data/shader/default.vs", gl::VERTEX_SHADER);
-			sp.add_shader_file("./data/shader/default.fs", gl::FRAGMENT_SHADER);
+			sp.add_shader_file("./data/client/shader/default.vs", gl::VERTEX_SHADER);
+			sp.add_shader_file("./data/client/shader/default.fs", gl::FRAGMENT_SHADER);
 			sp.link_program();
 
 			//Run event loop
