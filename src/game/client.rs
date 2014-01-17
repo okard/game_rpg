@@ -13,6 +13,7 @@ pub mod client {
 	pub mod engine;
 	pub mod shader;
 	pub mod tilemap;
+	pub mod math;
 }
 
 

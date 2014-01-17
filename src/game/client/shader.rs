@@ -155,3 +155,11 @@ impl Drop for ShaderProgram
   }
 }
 
+/*
+upload matrix:
+*
+formated_transform = Mat4<f32>
+gl::UniformMatrix4fv(context.transform, 1, gl::FALSE as u8, cast::transmute(&formated_transform)));
+*/
+
+

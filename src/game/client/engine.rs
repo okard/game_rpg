@@ -3,6 +3,8 @@ extern mod nalgebra;
 use nalgebra::na::{Mat4};
 use nalgebra::na;
 
+use super::math;
+
 
 pub struct RenderContext //is trait?
 {
@@ -14,7 +16,8 @@ pub struct RenderContext //is trait?
 	// handle mvp -> model-view-projection matrix
 	// save view (Camera)
 	// save projection
-	view: Mat4<f32>
+	view: Mat4<f32>,
+	projm: Mat4<f32>
 }
 
 /*
@@ -24,7 +27,7 @@ impl RenderContext
 {
 	pub fn new() -> RenderContext
 	{
-		RenderContext { view: na::zero() }
+		RenderContext { view: na::zero(), projm: math::ortho_projection(0.0, 0.0, 100.0, 100.0, -5.0, 5.0) }
 	}
 
 	//shader switch
@@ -35,14 +38,6 @@ impl RenderContext
 		drawable.draw(self);
 	}
 }
-
-
-/*
-upload matrix:
-*
-formated_transform = Mat4<f32>
-gl::UniformMatrix4fv(context.transform, 1, gl::FALSE as u8, cast::transmute(&formated_transform)));
-*/
 
 
 pub trait Drawable

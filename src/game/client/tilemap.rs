@@ -21,13 +21,6 @@ pub struct TilemapChunk
 	vbo_tileid : u32
 }
 
-impl engine::Drawable for TilemapChunk
-{
-	fn draw(&self, rc: &engine::RenderContext)
-	{
-
-	}
-}
 
 impl TilemapChunk
 {
@@ -46,6 +39,7 @@ impl TilemapChunk
 		//create dummy tile layout
 		let mut tiles : ~[Vec2<GLfloat>] = ~[];
 
+		//create the grid vertices
 		for x in range(0, 100)
 		{
 			for y in range(0, 100)
@@ -54,9 +48,10 @@ impl TilemapChunk
 			}
 		}
 
+		//TODO shader config elsewhere?
 		self.shader.add_shader_file("./data/client/shader/tilemap.vs.glsl", gl::VERTEX_SHADER);
 		self.shader.add_shader_file("./data/client/shader/tilemap.fs.glsl", gl::FRAGMENT_SHADER);
-		//sp.set_fragment_name("asdsa");
+		self.shader.set_fragment_name("out_color");
 		self.shader.link_program();
 
         unsafe
@@ -90,7 +85,7 @@ impl TilemapChunk
 
 	fn set_program_variable_vbo(&self, name: &str)
 	{
-
+		//in
 	}
 
 
@@ -103,9 +98,25 @@ impl TilemapChunk
 			gl::UniformMatrix4fv(id, 1, gl::FALSE as u8, cast::transmute(m));
 		}
 	}
-
-
 }
 
+impl engine::Drawable for TilemapChunk
+{
+	fn draw(&self, rc: &engine::RenderContext)
+	{
+		//use shader
+		self.shader.use_program();
+
+		//bind vao
+
+		//set uniform
+			//matrices
+
+		//render
+
+		//disable all
+
+	}
+}
 
 
