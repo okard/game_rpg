@@ -20,7 +20,8 @@ pub struct ShaderProgram
 	program_id: GLuint,
 	linked: bool,
 	shader: ~[GLuint],
-	uniforms: HashMap<u64, GLuint>
+	uniforms: HashMap<u64, GLuint>,
+	attribs: HashMap<u64, GLuint>
 }
 
 impl ShaderProgram
@@ -31,7 +32,8 @@ impl ShaderProgram
 			program_id: gl::CreateProgram(),
 			linked: false,
 			shader: ~[],
-			uniforms: HashMap::new()
+			uniforms: HashMap::new(),
+			attribs: HashMap::new()
 		}
 	}
 
@@ -123,6 +125,8 @@ impl ShaderProgram
 	{
 		unsafe
 		{
+			//TODO error checking
+			//has to be called before linking
 			name.with_c_str(|ptr| gl::BindFragDataLocation(self.program_id, 0, ptr));
 		}
 	}
@@ -135,9 +139,31 @@ impl ShaderProgram
 		unsafe
 		{
 			id = gl::GetUniformLocation(self.program_id, name.as_ptr() as *i8);
+
+			if id == -1 {
+				fail!("Can't retrieve Uniform: {}", name);
+			}
 		}
 		id
 	}
+
+	#[inline]
+	pub fn get_attrib(&self, name: &str) -> GLint
+	{
+		//TODO check uniforms map
+		let mut id = 0;
+		unsafe
+		{
+			id = gl::GetAttribLocation(self.program_id, name.as_ptr() as *i8);
+
+			if id == -1 {
+				fail!("Can't retrieve Attrib: {}", name);
+			}
+		}
+		id
+	}
+
+
 }
 
 impl Drop for ShaderProgram

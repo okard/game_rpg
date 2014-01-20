@@ -4,6 +4,7 @@ extern mod gl;
 
 use super::engine;
 use super::tilemap;
+use super::math;
 
 pub struct App
 {
@@ -48,14 +49,26 @@ impl App
 			let mut rc = engine::RenderContext::new();
 			let mut tchunk = tilemap::TilemapChunk::new();
 			tchunk.setup();
-			rc.draw(&tchunk);
+
+			let render_func = || {
+				rc.draw(&tchunk);
+			};
+
+			//let mut v : &math::Scaling = &rc.view;
+			//let mut v = &rc.view as &math::Scaling;
+			//v.scale(2.0, 2.0, 1.0);
+			//rc.view.scale(2.0, 2.0, 1.0);
+			math::scale(&mut rc.view, 5.0, 5.0, 1.0);
+
+			println!("projm: {}", rc.projm.to_str());
+			println!("view: {}", rc.view.to_str());
 
 			//Run event loop
-			App::run_event_loop(&window);
+			App::run_event_loop(&window, render_func);
 		}
 	}
 
-	fn run_event_loop(window : &glfw::Window)
+	fn run_event_loop(window : &glfw::Window, rf: ||)
 	{
 		// Loop until the user closes the window
 		while !window.should_close()
@@ -68,6 +81,7 @@ impl App
 			gl::Clear(gl::COLOR_BUFFER_BIT);
 
 			//draw all stuff
+			rf();
 
 			// Swap buffers
 			window.swap_buffers();

@@ -9,9 +9,12 @@ use nalgebra::na;
 
 use std::cast;
 use std::mem;
+use std::ptr;
 
 use super::engine;
 use super::shader;
+
+static CHUNK_SIZE : u8 = 5;
 
 pub struct TilemapChunk
 {
@@ -19,6 +22,8 @@ pub struct TilemapChunk
 	vao : u32,
 	vbo_vertex : u32,
 	vbo_tileid : u32
+
+	//hold ref/owned to TilemapChunkData logical part?
 }
 
 
@@ -37,22 +42,26 @@ impl TilemapChunk
 	pub fn setup(&mut self)
 	{
 		//create dummy tile layout
-		let mut tiles : ~[Vec2<GLfloat>] = ~[];
+		let mut tiles : ~[GLfloat] = ~[];
 
 		//create the grid vertices
-		for x in range(0, 100)
+		for x in range(0, CHUNK_SIZE)
 		{
-			for y in range(0, 100)
+			for y in range(0, CHUNK_SIZE)
 			{
-				tiles.push(Vec2::new(x as GLfloat, y as GLfloat));
+				tiles.push(x as GLfloat);
+				tiles.push(y as GLfloat);
 			}
 		}
+
+		println!("tilemap::setup() Count of vertices: {}", tiles.len());
 
 		//TODO shader config elsewhere?
 		self.shader.add_shader_file("./data/client/shader/tilemap.vs.glsl", gl::VERTEX_SHADER);
 		self.shader.add_shader_file("./data/client/shader/tilemap.fs.glsl", gl::FRAGMENT_SHADER);
-		self.shader.set_fragment_name("out_color");
+		self.shader.set_fragment_name("fragColor"); //required before linking
 		self.shader.link_program();
+		self.shader.use_program();
 
         unsafe
         {
@@ -64,15 +73,15 @@ impl TilemapChunk
             gl::GenBuffers(1, &mut self.vbo_vertex);
             gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo_vertex);
             gl::BufferData(gl::ARRAY_BUFFER,
-                           (tiles.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                           (tiles.len()/2 * mem::size_of::<GLfloat>()) as GLsizeiptr,
                            cast::transmute(&tiles[0]),
                            gl::STATIC_DRAW);
 
             // Specify the layout of the vertex data
-            //let pos_attr = "position".with_c_str(|ptr| gl::GetAttribLocation(program, ptr));
-            //gl::EnableVertexAttribArray(pos_attr as GLuint);
-            //gl::VertexAttribPointer(pos_attr as GLuint, 2, gl::FLOAT,
-            //                        gl::FALSE as GLboolean, 0, ptr::null());
+            let vertex_attr = self.shader.get_attrib("vertex");
+            gl::EnableVertexAttribArray(vertex_attr as GLuint);
+            gl::VertexAttribPointer(vertex_attr as GLuint, 2, gl::FLOAT,
+                                    gl::FALSE as GLboolean, 0, ptr::null());
 
 
             //create vbo tile_ids
@@ -80,6 +89,7 @@ impl TilemapChunk
 			//fill vbo
 
 			//bind uniform
+
         }
 	}
 
@@ -108,13 +118,21 @@ impl engine::Drawable for TilemapChunk
 		self.shader.use_program();
 
 		//bind vao
+		unsafe { gl::BindVertexArray(self.vao); }
 
 		//set uniform
-			//matrices
+		self.set_program_uniform_mat4("view", &rc.view);
+		//self.set_program_uniform_mat4("projm", &rc.projm);
 
 		//render
+		let triangle_count = CHUNK_SIZE as i32 * CHUNK_SIZE as i32;
+		gl::DrawArrays(gl::TRIANGLE_STRIP, 0, triangle_count);
+
+		//GL_TRIANGLE_STRIP ?
 
 		//disable all
+
+
 
 	}
 }

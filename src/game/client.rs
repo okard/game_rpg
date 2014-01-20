@@ -8,6 +8,9 @@ extern mod gl;
 extern mod nalgebra;
 
 use client::app;
+
+mod shared;
+
 pub mod client {
 	pub mod app;
 	pub mod engine;

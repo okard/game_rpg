@@ -113,12 +113,12 @@ pub fn perspective3d<N: Real + Cast<f32> + Zero + One>(width: N, height: N, fov:
 ///
 /// ```rust
 /// extern mod nalgebra;
-/// use nalgebra::types::{Vec3, Iso3};
+/// use nalgebra::na::{Vec3, Iso3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t     = Iso3::new(Vec3::new(1.0, 1.0, 1.0), na::zero());
-///     let trans = na::translation(t);
+///     let trans = na::translation(&t);
 ///
 ///     assert!(trans == Vec3::new(1.0, 1.0, 1.0));
 /// }
@@ -132,12 +132,12 @@ pub fn translation<V, M: Translation<V>>(m: &M) -> V {
 ///
 /// ```rust
 /// extern mod nalgebra;
-/// use nalgebra::types::{Vec3, Iso3};
+/// use nalgebra::na::{Vec3, Iso3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t      = Iso3::new(Vec3::new(1.0, 1.0, 1.0), na::zero());
-///     let itrans = na::inv_translation(t);
+///     let itrans = na::inv_translation(&t);
 ///
 ///     assert!(itrans == Vec3::new(-1.0, -1.0, -1.0));
 /// }
@@ -147,7 +147,7 @@ pub fn inv_translation<V, M: Translation<V>>(m: &M) -> V {
     m.inv_translation()
 }
 
-/// Appied the translation `v` to a copy of `m`.
+/// Applies the translation `v` to a copy of `m`.
 #[inline(always)]
 pub fn append_translation<V, M: Translation<V>>(m: &M, v: &V) -> M {
     Translation::append_translation_cpy(m, v)
@@ -164,7 +164,7 @@ pub fn append_translation<V, M: Translation<V>>(m: &M, v: &V) -> M {
 /// use nalgebra::na::{Vec3, Iso3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t  = Iso3::new(Vec3::new(1.0, 1.0, 1.0), na::zero());
 ///     let v  = Vec3::new(2.0, 2.0, 2.0);
 ///
@@ -185,13 +185,13 @@ pub fn translate<V, M: Translate<V>>(m: &M, v: &V) -> V {
 /// use nalgebra::na::{Vec3, Iso3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t  = Iso3::new(Vec3::new(1.0, 1.0, 1.0), na::zero());
 ///     let v  = Vec3::new(2.0, 2.0, 2.0);
 ///
-///     let tv = na::translate(&t, &v);
+///     let tv = na::inv_translate(&t, &v);
 ///
-///     assert!(tv == Vec3::new(1.0, 1.0, 1.0))
+///     assert!(na::approx_eq(&tv, &Vec3::new(1.0, 1.0, 1.0)))
 /// }
 #[inline(always)]
 pub fn inv_translate<V, M: Translate<V>>(m: &M, v: &V) -> V {
@@ -209,10 +209,10 @@ pub fn inv_translate<V, M: Translate<V>>(m: &M, v: &V) -> V {
 /// use nalgebra::na::{Vec3, Rot3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t = Rot3::new(Vec3::new(1.0, 1.0, 1.0));
 ///
-///     assert!(na::rotation(t) == Vec3::new(1.0, 1.0, 1.0));
+///     assert!(na::approx_eq(&na::rotation(&t), &Vec3::new(1.0, 1.0, 1.0)));
 /// }
 /// ```
 #[inline(always)]
@@ -228,10 +228,10 @@ pub fn rotation<V, M: Rotation<V>>(m: &M) -> V {
 /// use nalgebra::na::{Vec3, Rot3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t = Rot3::new(Vec3::new(1.0, 1.0, 1.0));
 ///
-///     assert!(na::inv_rotation(t) == Vec3::new(-1.0, -1.0, -1.0));
+///     assert!(na::approx_eq(&na::inv_rotation(&t), &Vec3::new(-1.0, -1.0, -1.0)));
 /// }
 /// ```
 #[inline(always)]
@@ -247,12 +247,12 @@ pub fn inv_rotation<V, M: Rotation<V>>(m: &M) -> V {
 /// use nalgebra::na::{Vec3, Rot3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t  = Rot3::new(Vec3::new(0.0, 0.0, 0.0));
 ///     let v  = Vec3::new(1.0, 1.0, 1.0);
 ///     let rt = na::append_rotation(&t, &v);
 ///
-///     assert!(na::rotation(&rt) == Vec3::new(1.0, 1.0, 1.0))
+///     assert!(na::approx_eq(&na::rotation(&rt), &Vec3::new(1.0, 1.0, 1.0)))
 /// }
 /// ```
 #[inline(always)]
@@ -268,12 +268,12 @@ pub fn append_rotation<V, M: Rotation<V>>(m: &M, v: &V) -> M {
 /// use nalgebra::na::{Vec3, Rot3};
 /// use nalgebra::na;
 ///
-/// pub main() {
+/// fn main() {
 ///     let t  = Rot3::new(Vec3::new(0.0, 0.0, 0.0));
 ///     let v  = Vec3::new(1.0, 1.0, 1.0);
-///     let rt = na::preend_rotation(&t, &v);
+///     let rt = na::prepend_rotation(&t, &v);
 ///
-///     assert!(na::rotation(&rt) == Vec3::new(1.0, 1.0, 1.0))
+///     assert!(na::approx_eq(&na::rotation(&rt), &Vec3::new(1.0, 1.0, 1.0)))
 /// }
 /// ```
 #[inline(always)]
@@ -289,16 +289,17 @@ pub fn prepend_rotation<V, M: Rotation<V>>(m: &M, v: &V) -> M {
 ///
 /// ```rust
 /// extern mod nalgebra;
+/// use std::num::Real;
 /// use nalgebra::na::{Rot3, Vec3};
 /// use nalgebra::na;
 ///
-/// pub main() {
-///     let t  = Rot3::new(Vec3::new(1.0, 0.0, 0.0));
-///     let v  = Vec3::new(0.0, 0.0, na::pi() / 2.0);
+/// fn main() {
+///     let t  = Rot3::new(Vec3::new(0.0, 0.0, 0.5 * Real::pi()));
+///     let v  = Vec3::new(1.0, 0.0, 0.0);
 ///
 ///     let tv = na::rotate(&t, &v);
 ///
-///     assert!(tv == Vec3::new(0.0, 1.0, 0.0))
+///     assert!(na::approx_eq(&tv, &Vec3::new(0.0, 1.0, 0.0)))
 /// }
 /// ```
 #[inline(always)]
@@ -311,15 +312,17 @@ pub fn rotate<V, M: Rotate<V>>(m: &M, v: &V) -> V {
 ///
 /// ```rust
 /// extern mod nalgebra;
+/// use std::num::Real;
+/// use nalgebra::na::{Rot3, Vec3};
 /// use nalgebra::na;
 ///
-/// pub main() {
-///     let t  = Rot3::new(Vec3::new(1.0, 0.0, 0.0));
-///     let v  = Vec3::new(0.0, 0.0, na::pi() / 2.0);
+/// fn main() {
+///     let t  = Rot3::new(Vec3::new(0.0, 0.0, 0.5 * Real::pi()));
+///     let v  = Vec3::new(1.0, 0.0, 0.0);
 ///
-///     let tv = na::rotate(&t, &v);
+///     let tv = na::inv_rotate(&t, &v);
 ///
-///     assert!(tv == Vec3::new(0.0, -1.0, 0.0))
+///     assert!(na::approx_eq(&tv, &Vec3::new(0.0, -1.0, 0.0)))
 /// }
 /// ```
 #[inline(always)]
@@ -331,7 +334,7 @@ pub fn inv_rotate<V, M: Rotate<V>>(m: &M, v: &V) -> V {
  * RotationWithTranslation<LV, AV>
  */
 
-/// Rotates a copy of `m` by `amount` using `center` ase the pivot point.
+/// Rotates a copy of `m` by `amount` using `center` as the pivot point.
 #[inline(always)]
 pub fn append_rotation_wrt_point<LV: Neg<LV>,
                                  AV,
@@ -473,7 +476,7 @@ pub fn cross_matrix<V: CrossMatrix<M>, M>(v: &V) -> M {
  * ToHomogeneous<U>
  */
 
-/// Converts a matrix or vector to homogoneous coordinates.
+/// Converts a matrix or vector to homogeneous coordinates.
 #[inline(always)]
 pub fn to_homogeneous<M: ToHomogeneous<Res>, Res>(m: &M) -> Res {
     ToHomogeneous::to_homogeneous(m)
@@ -483,7 +486,7 @@ pub fn to_homogeneous<M: ToHomogeneous<Res>, Res>(m: &M) -> Res {
  * FromHomogeneous<U>
  */
 
-/// Converts a matrix or vector from homogoneous coordinates.
+/// Converts a matrix or vector from homogeneous coordinates.
 ///
 /// w-normalization is appied.
 #[inline(always)]

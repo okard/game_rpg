@@ -18,7 +18,7 @@ out-of-place modifications.
 
 * You can import the whole prelude using:
 
-```.rust
+```
 use nalgebra::na::*;
 ```
 
@@ -82,7 +82,7 @@ If you encounter problems, make sure you have the last version before creating a
 
 You can build the documentation on the `doc` folder using:
 
-```.rust
+```
 make doc
 ```
 
@@ -103,6 +103,7 @@ Feel free to add your project to this list if you happen to use **nalgebra**!
 #[deny(unnecessary_qualification)];
 #[warn(missing_doc)];
 #[feature(macro_rules)];
+#[doc(html_root_url = "http://crozet.re/nalgebra/doc")];
 
 extern mod std;
 extern mod extra;
