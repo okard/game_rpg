@@ -32,8 +32,10 @@ impl App
 		do glfw::start
 		{
 			// Create a windowed mode window and its OpenGL context
-			let window = glfw::Window::create(800, 600, "Game", glfw::Windowed)
+			let window = glfw::Window::create(1024, 768, "Game", glfw::Windowed)
 				.expect("Failed to create GLFW window.");
+
+			window.set_size_callback(~WindowSizeContext);
 
 			// Make the window's context current
 			window.make_context_current();
@@ -43,25 +45,30 @@ impl App
 
 			//Viewport config
 			let (width, height) = window.get_size();
+			println!("Size: {}x{}", width, height);
 			gl::Viewport(0, 0, width, height);
 
 			//create render context
-			let mut rc = engine::RenderContext::new();
+			let mut rc = engine::RenderContext::new(width as f32, height as f32);
 			let mut tchunk = tilemap::TilemapChunk::new();
 			tchunk.setup();
-
-			let render_func = || {
-				rc.draw(&tchunk);
-			};
 
 			//let mut v : &math::Scaling = &rc.view;
 			//let mut v = &rc.view as &math::Scaling;
 			//v.scale(2.0, 2.0, 1.0);
-			//rc.view.scale(2.0, 2.0, 1.0);
-			math::scale(&mut rc.view, 5.0, 5.0, 1.0);
+			math::scale(&mut rc.view, 200.0, 200.0, 1.0);
+			//math::translate(&mut rc.view, -0.5, -0.5, 0.0);
 
 			println!("projm: {}", rc.projm.to_str());
 			println!("view: {}", rc.view.to_str());
+
+			gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE);
+
+
+
+			let render_func = || {
+				rc.draw(&tchunk);
+			};
 
 			//Run event loop
 			App::run_event_loop(&window, render_func);
@@ -77,7 +84,7 @@ impl App
 			glfw::poll_events();
 
 			// Clear the screen to black
-			gl::ClearColor(0.3, 0.3, 0.3, 1.0);
+			gl::ClearColor(0.0, 0.0, 0.0, 1.0);
 			gl::Clear(gl::COLOR_BUFFER_BIT);
 
 			//draw all stuff
@@ -88,6 +95,18 @@ impl App
 		}
 	}
 }
+
+struct WindowSizeContext;
+impl glfw::WindowSizeCallback for WindowSizeContext
+{
+    fn call(&self, window: &glfw::Window, width: i32, height: i32)
+    {
+        println!("Window size: ({}, {})", width, height);
+        gl::Viewport(0, 0, width, height);
+        //TODO update projection matrix here
+    }
+}
+
 
 struct ErrorContext;
 impl glfw::ErrorCallback for ErrorContext {

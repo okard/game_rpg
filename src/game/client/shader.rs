@@ -135,16 +135,19 @@ impl ShaderProgram
 	pub fn get_uniform(&self, name: &str) -> GLint
 	{
 		//TODO check uniforms map
-		let mut id = 0;
+
 		unsafe
 		{
+			let mut id = 0;
+
 			id = gl::GetUniformLocation(self.program_id, name.as_ptr() as *i8);
 
 			if id == -1 {
 				fail!("Can't retrieve Uniform: {}", name);
 			}
+
+			return id;
 		}
-		id
 	}
 
 	#[inline]

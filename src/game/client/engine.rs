@@ -1,7 +1,7 @@
 
 extern mod nalgebra;
 use nalgebra::na::{Mat4};
-use nalgebra::na;
+//use nalgebra::na;
 
 use super::math;
 
@@ -27,9 +27,11 @@ pub struct RenderContext //is trait?
 */
 impl RenderContext
 {
-	pub fn new() -> RenderContext
+	pub fn new(width: f32, height: f32) -> RenderContext
 	{
-		RenderContext { view: math::simple_view(), projm: math::ortho_projection(0.0, 0.0, 100.0, 100.0, -5.0, 5.0) }
+		RenderContext { view: math::simple_view(),
+			            projm: math::ortho_projection(0.0, width, 0.0, height, -1.0, 1.0)
+			          }
 	}
 
 	//shader switch

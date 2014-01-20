@@ -4,7 +4,7 @@ extern mod nalgebra;
 
 use gl::types::*;
 
-use nalgebra::na::{Vec2, Mat4};
+use nalgebra::na::{Mat4};
 use nalgebra::na;
 
 use std::cast;
@@ -13,15 +13,20 @@ use std::ptr;
 
 use super::engine;
 use super::shader;
+use super::math;
 
-static CHUNK_SIZE : u8 = 5;
+//static CHUNK_SIZE : u8 = 10;
 
 pub struct TilemapChunk
 {
 	shader :shader::ShaderProgram,
 	vao : u32,
 	vbo_vertex : u32,
-	vbo_tileid : u32
+	vbo_tileid : u32,
+
+	vertice_count : u32
+
+	//save model matrix
 
 	//hold ref/owned to TilemapChunkData logical part?
 }
@@ -35,7 +40,8 @@ impl TilemapChunk
 			shader: shader::ShaderProgram::new(),
 			vao: 0,
 			vbo_vertex: 0,
-			vbo_tileid: 0
+			vbo_tileid: 0,
+			vertice_count: 0
 		}
 	}
 
@@ -45,16 +51,41 @@ impl TilemapChunk
 		let mut tiles : ~[GLfloat] = ~[];
 
 		//create the grid vertices
-		for x in range(0, CHUNK_SIZE)
-		{
-			for y in range(0, CHUNK_SIZE)
-			{
-				tiles.push(x as GLfloat);
-				tiles.push(y as GLfloat);
-			}
-		}
 
-		println!("tilemap::setup() Count of vertices: {}", tiles.len());
+		//create 5 tiles
+		for t in range(0, 1)
+		{
+			let tf = t as f32;
+			//t1 bottom left
+			tiles.push(0.0+tf); //bl x
+			tiles.push(0.0+tf); //bl y
+
+			//t1 bottom right
+			tiles.push(1.0+tf);
+			tiles.push(0.0+tf);
+
+			//t1 top left
+			tiles.push(0.0+tf);
+			tiles.push(1.0+tf);
+
+			//t2 top left
+			tiles.push(0.0+tf);
+			tiles.push(1.0+tf);
+
+			//t2 bottom right
+			tiles.push(1.0+tf);
+			tiles.push(0.0+tf);
+
+			//t2 top right
+			tiles.push(1.0+tf);
+			tiles.push(1.0+tf);
+		}
+		self.vertice_count =  tiles.len() as u32/2 ; //vertice count each 2 are one point so / 2
+
+		//create indices?
+
+		println!("tilemap::setup() Count of vertices: {}", self.vertice_count);
+		println!("tilemap::setup() vertices: {}", tiles.to_str());
 
 		//TODO shader config elsewhere?
 		self.shader.add_shader_file("./data/client/shader/tilemap.vs.glsl", gl::VERTEX_SHADER);
@@ -73,7 +104,7 @@ impl TilemapChunk
             gl::GenBuffers(1, &mut self.vbo_vertex);
             gl::BindBuffer(gl::ARRAY_BUFFER, self.vbo_vertex);
             gl::BufferData(gl::ARRAY_BUFFER,
-                           (tiles.len()/2 * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                           (tiles.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
                            cast::transmute(&tiles[0]),
                            gl::STATIC_DRAW);
 
@@ -90,13 +121,19 @@ impl TilemapChunk
 
 			//bind uniform
 
+
+			//glBindVertexArray(0);
+			//glDisableVertexAttribArray
+			//gl::BindBuffer(*, 0) ?
         }
 	}
 
+	/*
 	fn set_program_variable_vbo(&self, name: &str)
 	{
 		//in
 	}
+	*/
 
 
 	fn set_program_uniform_mat4(&self, name: &str, m: &Mat4<f32>)
@@ -117,23 +154,29 @@ impl engine::Drawable for TilemapChunk
 		//use shader
 		self.shader.use_program();
 
-		//bind vao
-		unsafe { gl::BindVertexArray(self.vao); }
 
+		let mut model : Mat4<f32> = na::zero();
+		math::set_identity(&mut model);
 		//set uniform
-		self.set_program_uniform_mat4("view", &rc.view);
-		//self.set_program_uniform_mat4("projm", &rc.projm);
+		//let mvp = /*rc.projm **/ rc.view;
+		let mvp = rc.projm * rc.view * model;
+		self.set_program_uniform_mat4("mvp", &mvp);
+
+		//bind vao
+		gl::BindVertexArray(self.vao);
 
 		//render
-		let triangle_count = CHUNK_SIZE as i32 * CHUNK_SIZE as i32;
-		gl::DrawArrays(gl::TRIANGLE_STRIP, 0, triangle_count);
+		gl::DrawArrays(gl::TRIANGLES, 0, self.vertice_count as i32);
+
+
+		/*
+		glBindVertexArray(vao);
+		glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_BYTE, (void*)0);
+		*/
 
 		//GL_TRIANGLE_STRIP ?
 
 		//disable all
-
-
-
 	}
 }
 
