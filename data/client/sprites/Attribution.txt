@@ -1,0 +1,10 @@
+
+
+imp_walk_sword.png
+	http://opengameart.org/content/lpc-imp
+	Author: William.Thompsonj (http://opengameart.org/users/williamthompsonj)
+	License: CC-BY 3.0
+
+imp_walk_sword_normal.png
+	Author: okard
+	License: CC-BY 3.0

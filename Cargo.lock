@@ -1,0 +1,60 @@
+[root]
+name = "rpg_game"
+version = "0.0.1"
+dependencies = [
+ "gl 0.0.1 (git+https://github.com/bjz/gl-rs#398783d27696e712ad2ce237c79b2766ff2c7f7b)",
+ "glfw 0.0.1 (git+https://github.com/bjz/glfw-rs.git#90c56d4809c115170ba3110c847253bfdc11e7ec)",
+ "nalgebra 0.1.0 (git+https://github.com/sebcrozet/nalgebra#560dff3891c9ae72bf48ee058646c828ec4e2f89)",
+]
+
+[[package]]
+name = "gl"
+version = "0.0.1"
+source = "git+https://github.com/bjz/gl-rs#398783d27696e712ad2ce237c79b2766ff2c7f7b"
+dependencies = [
+ "gl_generator 0.0.1 (git+https://github.com/bjz/gl-rs#398783d27696e712ad2ce237c79b2766ff2c7f7b)",
+]
+
+[[package]]
+name = "gl_generator"
+version = "0.0.1"
+source = "git+https://github.com/bjz/gl-rs#398783d27696e712ad2ce237c79b2766ff2c7f7b"
+dependencies = [
+ "khronos_api 0.0.1 (git+https://github.com/bjz/gl-rs#398783d27696e712ad2ce237c79b2766ff2c7f7b)",
+ "rust-xml 0.1.0 (git+https://github.com/netvl/rust-xml#418a3776922e545a7c33b1f68d9c8c513dc5c80b)",
+]
+
+[[package]]
+name = "glfw"
+version = "0.0.1"
+source = "git+https://github.com/bjz/glfw-rs.git#90c56d4809c115170ba3110c847253bfdc11e7ec"
+dependencies = [
+ "link_glfw 0.1.0 (git+https://github.com/bjz/glfw-rs.git#90c56d4809c115170ba3110c847253bfdc11e7ec)",
+ "semver 0.0.1 (git+https://github.com/rust-lang/semver#df163f7b22686493b037eee1f1f9d1a2742f9bbe)",
+]
+
+[[package]]
+name = "khronos_api"
+version = "0.0.1"
+source = "git+https://github.com/bjz/gl-rs#398783d27696e712ad2ce237c79b2766ff2c7f7b"
+
+[[package]]
+name = "link_glfw"
+version = "0.1.0"
+source = "git+https://github.com/bjz/glfw-rs.git#90c56d4809c115170ba3110c847253bfdc11e7ec"
+
+[[package]]
+name = "nalgebra"
+version = "0.1.0"
+source = "git+https://github.com/sebcrozet/nalgebra#560dff3891c9ae72bf48ee058646c828ec4e2f89"
+
+[[package]]
+name = "rust-xml"
+version = "0.1.0"
+source = "git+https://github.com/netvl/rust-xml#418a3776922e545a7c33b1f68d9c8c513dc5c80b"
+
+[[package]]
+name = "semver"
+version = "0.0.1"
+source = "git+https://github.com/rust-lang/semver#df163f7b22686493b037eee1f1f9d1a2742f9bbe"
+

@@ -1,6 +1,2 @@
 
-/client
-/server
-
-# apitrace files
-*.trace
+target/

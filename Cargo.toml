@@ -1,0 +1,26 @@
+[package]
+
+name = "rpg_game"
+version = "0.0.1"
+authors = []
+
+
+# game core library (shared stuff)
+[lib]
+name = "gcore"
+path = "src/gcore/lib.rs"
+
+
+[[bin]]
+name = "client"
+path = "src/gclient/main.rs"
+
+
+[dependencies.gl]
+git = "https://github.com/bjz/gl-rs"
+
+[dependencies.glfw]
+git = "https://github.com/bjz/glfw-rs.git"
+
+[dependencies.nalgebra]
+git = "https://github.com/sebcrozet/nalgebra"
